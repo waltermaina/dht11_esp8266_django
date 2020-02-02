@@ -25,6 +25,19 @@ class DetailData(generics.RetrieveUpdateDestroyAPIView):
 """
 List all snippets, or create a new snippet.
 """
+
+# define a function to check if a record
+# is a duplicate base on time recorded
+def is_duplicate(rcvd_time,db_record_time):
+	duration = rcvd_time.replace(tzinfo=None) - db_record_time.replace(tzinfo=None)
+	duration_in_s = duration.total_seconds()
+
+	# if it is less than one hour return true, allow 100 secs for error
+	if duration_in_s < 3500:
+		return True
+	else:
+		return False
+
 class ListData(APIView):
     """
     List all snippets, or create a new snippet.
@@ -41,6 +54,13 @@ class ListData(APIView):
         old_time = datetime.datetime.now().replace(microsecond=0)
         new_time = old_time - datetime.timedelta(seconds=int(time_seconds))
         newDataDict['time'] = str(new_time)
+
+        # Check if it is a duplicate of last record in db
+        last_record = models.DHT11Data.objects.last()
+        last_record_time = last_record.time
+        if is_duplicate(new_time,last_record_time):
+        	print("Duplicate record received")
+        	return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = serializers.Dht11DataSerializer(data=newDataDict)
         if serializer.is_valid():
