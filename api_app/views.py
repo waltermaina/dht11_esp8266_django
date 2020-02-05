@@ -49,17 +49,18 @@ class ListData(APIView):
     def post(self, request, format=None):
     	# Convert received time from seconds to datetime format
         newDataDict = request.data
-        print(newDataDict)
+        #print(newDataDict)
         time_seconds = newDataDict['time']
         old_time = datetime.datetime.now().replace(microsecond=0)
         new_time = old_time - datetime.timedelta(seconds=int(time_seconds))
-        newDataDict['time'] = str(new_time)
+        #newDataDict['time'] = str(new_time)
+        newDataDict['time'] = new_time.strftime("%Y-%m-%d %H:%M")
 
         # Check if it is a duplicate of last record in db
         last_record = models.DHT11Data.objects.last()
         last_record_time = last_record.time
         if is_duplicate(new_time,last_record_time):
-        	print("Duplicate record received")
+        	#print("Duplicate record received")
         	return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = serializers.Dht11DataSerializer(data=newDataDict)
