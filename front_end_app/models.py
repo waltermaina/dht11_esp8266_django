@@ -1,6 +1,7 @@
 # front_end_app/models.py
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+import datetime
 
 
 class DHT11Data(models.Model):
@@ -18,7 +19,7 @@ class DHT11Data(models.Model):
             MinValueValidator(0.0)
         ]
      )
-    time = models.DateTimeField(primary_key=True) # Time data was recorded
+    time = models.DateTimeField(default=datetime.datetime.now,primary_key=True) # Time data was recorded
 
     def __str__(self):
         """A string representation of the model."""
