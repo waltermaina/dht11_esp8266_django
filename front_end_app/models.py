@@ -19,7 +19,7 @@ class DHT11Data(models.Model):
             MinValueValidator(0.0)
         ]
      )
-    #time = models.DateTimeField(default=datetime.datetime.now,primary_key=True) # Time data was recorded
+    time = models.DateTimeField(default=datetime.datetime.now,primary_key=True) # Time data was recorded
 
     def __str__(self):
         """A string representation of the model."""
