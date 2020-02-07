@@ -25,7 +25,10 @@ def temperature_chart(request):
     # There was a need to serilize the data
     serializer = serializers.Dht11DataSerializer(queryset, many=True)
     for entry in serializer.data:
-        labels.append(entry['time'])
+        time_rec = entry['time']
+        tim_rec_no_time_zone = time_rec.replace(":00+03:00","")
+        labels.append(tim_rec_no_time_zone)
+        #labels.append(entry['time'])
         data.append(entry['temperature'])
     
     return JsonResponse(data={
@@ -43,7 +46,10 @@ def humidity_chart(request):
     # There was a need to serilize the data
     serializer = serializers.Dht11DataSerializer(queryset, many=True)
     for entry in serializer.data:
-        labels.append(entry['time'])
+        time_rec = entry['time']
+        tim_rec_no_time_zone = time_rec.replace(":00+03:00","")
+        labels.append(tim_rec_no_time_zone)
+        #labels.append(entry['time'])
         data.append(entry['humidity'])
     
     return JsonResponse(data={
