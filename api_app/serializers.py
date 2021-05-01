@@ -11,3 +11,13 @@ class Dht11DataSerializer(serializers.ModelSerializer):
             'time',
         )
         model = models.DHT11Data
+
+class NewDht11DataSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = (
+            'record_id',
+            'temperature',
+            'humidity',
+            'time',
+        )
+        model = models.NewDHT11Data

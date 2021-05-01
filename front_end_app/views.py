@@ -19,11 +19,11 @@ def temperature_chart(request):
     labels = []
     data = []
     # Get the last n records
-    queryset = models.DHT11Data.objects.all().order_by('-time')[:24]
+    queryset = models.NewDHT11Data.objects.all().order_by('-time')[:24]
     # Sort them in ascending order
     queryset = reversed(queryset)
     # There was a need to serilize the data
-    serializer = serializers.Dht11DataSerializer(queryset, many=True)
+    serializer = serializers.NewDht11DataSerializer(queryset, many=True)
     for entry in serializer.data:
         time_rec = entry['time']
         tim_rec_no_time_zone = time_rec.replace(":00+03:00","")
@@ -40,11 +40,11 @@ def humidity_chart(request):
     labels = []
     data = []
     # Get the last n records
-    queryset = models.DHT11Data.objects.all().order_by('-time')[:24]
+    queryset = models.NewDHT11Data.objects.all().order_by('-time')[:24]
     # Sort them in ascending order
     queryset = reversed(queryset)
     # There was a need to serilize the data
-    serializer = serializers.Dht11DataSerializer(queryset, many=True)
+    serializer = serializers.NewDht11DataSerializer(queryset, many=True)
     for entry in serializer.data:
         time_rec = entry['time']
         tim_rec_no_time_zone = time_rec.replace(":00+03:00","")

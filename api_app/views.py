@@ -101,3 +101,72 @@ class DataDetail(APIView):
         queryset = self.get_object(pk)
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# Views for the model that has record id
+class NewListData(APIView):
+    """
+    List all snippets, or create a new snippet.
+    """
+    def get(self, request, format=None):
+    	queryset = models.NewDHT11Data.objects.all()
+    	serializer = serializers.NewDht11DataSerializer(queryset, many=True)
+    	return Response(serializer.data)
+    def post(self, request, format=None):
+    	# Convert received time from seconds to datetime format
+        newDataDict = request.data
+        #print(newDataDict)
+        time_seconds = newDataDict['time']
+        old_time = datetime.datetime.now().replace(microsecond=0)
+        new_time = old_time - datetime.timedelta(seconds=int(time_seconds))
+        #newDataDict['time'] = str(new_time)
+        newDataDict['time'] = new_time.strftime("%Y-%m-%d %H:%M")
+        
+        serializer = serializers.NewDht11DataSerializer(data=newDataDict)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# A view to get the last record
+class LastRecordData(APIView):
+    """
+    Get the last record in db.
+    """
+    def get(self, request, format=None):
+        last_record = models.NewDHT11Data.objects.last()
+        # If there are no records set record id to zero
+        if last_record is None:
+            last_record = models.NewDHT11Data()
+            last_record.record_id=0
+        serializer = serializers.NewDht11DataSerializer(last_record)
+        return Response(serializer.data)
+
+
+class NewDataDetail(APIView):
+    """
+    Retrieve, update or delete a data instance.
+    """
+    def get_object(self, pk):
+        try:
+            return models.NewDHT11Data.objects.get(pk=pk)
+        except models.NewDHT11Data.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        queryset = self.get_object(pk)
+        serializer = serializers.NewDHT11DataSerializer(queryset)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        queryset = self.get_object(pk)
+        serializer = serializers.NewDHT11DataSerializer(queryset, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        queryset = self.get_object(pk)
+        queryset.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
